@@ -1,5 +1,6 @@
 import {Component, HostListener} from '@angular/core';
 import {QrcodeService} from '../../services/qrcode.service';
+import {catchError, of} from 'rxjs';
 
 @Component({
   selector: 'app-qr-reader',
@@ -87,6 +88,7 @@ export class QrReaderComponent {
   }
 
   qrCodeText:string = '';
+  error:boolean = false
 
   uploadImage(){
 
@@ -95,10 +97,22 @@ export class QrReaderComponent {
     const formData = new FormData();
     formData.append('image', this.selectedFile);
 
+    this.qrCodeService.readCode(formData)
+      .pipe(
+        catchError(err => {
 
-    this.qrCodeService.readCode(formData).subscribe((res)=>{
-      this.qrCodeText = res.text
-    })
+          this.error = true
+
+          this.qrCodeText = 'Error reading Image';
+          return of(null);
+        })
+      )
+      .subscribe((res) => {
+        if (res) {
+          this.qrCodeText = res.text;
+          this.error = false
+        }
+      });
   }
 
   copied: boolean = false;
@@ -114,7 +128,6 @@ export class QrReaderComponent {
     });
   }
 
-
   generatePreview(file: File): void {
     const reader = new FileReader();
     reader.onload = () => {
@@ -122,7 +135,4 @@ export class QrReaderComponent {
     };
     reader.readAsDataURL(file);
   }
-
-
-
 }

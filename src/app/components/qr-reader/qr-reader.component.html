@@ -10,14 +10,20 @@
 
 @if (imagePreview) {
   <div class="qrCode">
-    <img [src]="imagePreview" alt="QR Code Preview" class="image-preview" />
+
+    <div class="image">
+      <img [src]="imagePreview" alt="QR Code Preview" class="image-preview"/>
+    </div>
+
+    @if (error){
+      <div class="overlay">
+        ERROR READING QR CODE <br/> OR <br/> IMAGE PROVIDED IS NOT QR CODE
+      </div>
+    }
   </div>
 }
 
-
-@if (qrCodeText){
-
-
+@if (qrCodeText) {
   <div class="container__item">
 
     <label>QR Code Text</label>
@@ -27,8 +33,7 @@
     </div>
   </div>
 
-  @if (copied){
+  @if (copied) {
     <p class="saved-message">Saved to clipboard</p>
   }
-
 }
