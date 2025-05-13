@@ -1,18 +1,59 @@
 <div class="container">
   <div class="container__item">
     <form (ngSubmit)="onSubmit()" #urlForm="ngForm" class="form">
-      <input  type="text"
-              name="url"
-              placeholder="url"
-              [(ngModel)]="urlValue"
-              required class="form__field" placeholder="insert url" />
+      <input type="text"
+             name="url"
+             placeholder="url"
+             [(ngModel)]="urlValue"
+             required class="form__field" placeholder="insert url"/>
       <button type="submit" class="btn btn--primary btn--inside uppercase">submit</button>
     </form>
   </div>
 </div>
 
-@if (imageBase64){
-  <div class="qrCode">
-    <img [src]="'data:image/png;base64,' + imageBase64" alt="Base64 Image" />
+@if (imageBase64) {
+
+  <div class="qr">
+
+    <div class="qrCode">
+      <img [src]="'data:image/png;base64,' + imageBase64" alt="Qr"  #qrImage/>
+
+      <button (click)="downloadImage()" class="btn btn--primary relative  uppercase">Download</button>
+
+    </div>
+
+    <div class="qrEditing">
+      <h3>Edit QR-code</h3>
+
+      <h3>Foreground Color:</h3>
+      <div class="color-palette">
+
+        @for (color of colorOptions; track $index) {
+          <div class="color-option"
+               [style.background]="color"
+               [class.selected]="color === foregroundColor"
+               (click)="foregroundColor = color">
+          </div>
+        }
+      </div>
+
+      <hr style="width: 100%"/>
+      <label class="checkbox">
+        Bubble Style:
+        <input type="checkbox" [(ngModel)]="bubbleStyle" name="bubble"/>
+      </label>
+
+      <label class="checkbox">
+        Transparent Background:
+        <input type="checkbox" [(ngModel)]="transparentBackground" name="transparent"/>
+      </label>
+
+      <hr style="width: 100%"/>
+
+      <h3 style="margin: 0">Logo</h3>
+      <input class="file" type="file" (change)="onLogoChange($event)"/>
+
+      <button class="btn btn--primary  uppercase" (click)="onRegenerate()">Regenerate</button>
+    </div>
   </div>
 }

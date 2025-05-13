@@ -17,7 +17,7 @@
 
     @if (error){
       <div class="overlay">
-        ERROR READING QR CODE <br/> OR <br/> IMAGE PROVIDED IS NOT QR CODE
+        {{ error.error }}
       </div>
     }
   </div>

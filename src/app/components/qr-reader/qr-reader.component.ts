@@ -88,7 +88,7 @@ export class QrReaderComponent {
   }
 
   qrCodeText:string = '';
-  error:boolean = false
+  error:any
 
   uploadImage(){
 
@@ -101,7 +101,7 @@ export class QrReaderComponent {
       .pipe(
         catchError(err => {
 
-          this.error = true
+          this.error = err
 
           this.qrCodeText = 'Error reading Image';
           return of(null);
@@ -135,4 +135,6 @@ export class QrReaderComponent {
     };
     reader.readAsDataURL(file);
   }
+
+  protected readonly JSON = JSON;
 }
