@@ -85,7 +85,7 @@ a:hover {
 .qrCode img {
   margin-top: 20px;
   box-shadow: rgba(0, 0, 0, 0.13) 1px 3px 3px 3px;
-  border-radius: 100px;
+  /*border-radius: 100px;*/
   width: 700px;
   height: 700px;
   object-fit: cover;

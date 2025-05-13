@@ -16,7 +16,11 @@
   <div class="qr">
 
     <div class="qrCode">
-      <img [src]="'data:image/png;base64,' + imageBase64" alt="Qr"  #qrImage/>
+      <img  [ngStyle]="{
+      'border': border,
+      'border-radius': borderRadius + 'px',
+      'object-fit': 'cover'
+    }" [src]="'data:image/png;base64,' + imageBase64" alt="Qr"  #qrImage/>
 
       <button (click)="downloadImage()" class="btn btn--primary relative  uppercase">Download</button>
 
@@ -28,16 +32,29 @@
       <h3>Foreground Color:</h3>
       <div class="color-palette">
 
-        @for (color of colorOptions; track $index) {
+        @for (color of colorOptions;track $index){
           <div class="color-option"
                [style.background]="color"
                [class.selected]="color === foregroundColor"
                (click)="foregroundColor = color">
           </div>
         }
+
+
       </div>
 
       <hr style="width: 100%"/>
+
+      <label for="borderWidth">Border Width (px):</label>
+      <input id="borderWidth" type="number" [(ngModel)]="borderWidth" class="form__field" min="1" max="20"/>
+
+
+      <label for="borderRadius">Border Radius:</label>
+      <input id="borderRadius" type="number" [(ngModel)]="borderRadius" class="form__field" min="0" max="200"/>
+
+      <hr style="width: 100%"/>
+
+      <!-- Bubble Style and Background -->
       <label class="checkbox">
         Bubble Style:
         <input type="checkbox" [(ngModel)]="bubbleStyle" name="bubble"/>
@@ -50,10 +67,12 @@
 
       <hr style="width: 100%"/>
 
+      <!-- Logo Upload -->
       <h3 style="margin: 0">Logo</h3>
       <input class="file" type="file" (change)="onLogoChange($event)"/>
 
-      <button class="btn btn--primary  uppercase" (click)="onRegenerate()">Regenerate</button>
+      <button class="btn btn--primary uppercase" (click)="onRegenerate()">Regenerate</button>
     </div>
   </div>
 }
+

@@ -4,6 +4,7 @@ import { QrcodeService } from '../../services/qrcode.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {NgStyle} from '@angular/common';
 
 @Component({
   selector: 'app-qr-generator',
@@ -12,7 +13,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     FormsModule,
     ReactiveFormsModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    NgStyle
   ],
   templateUrl: './qr-generator.component.html',
   styleUrl: './qr-generator.component.css'
@@ -27,10 +29,20 @@ export class QrGeneratorComponent {
   errorMessage: string = '';
   successMessage: string = '';
 
+  borderWidth: number = 5;  // За замовчуванням ширина бордера 5px
+
+
+  border: string = `5px solid #000000`;
+
+
   foregroundColor = '#000000';
   backgroundColor = '#ffffff';
   bubbleStyle = false;
   transparentBackground = false;
+
+
+
+  borderRadius: number = 30;
 
   colorOptions: string[] = [
     '#000000',
@@ -100,6 +112,7 @@ export class QrGeneratorComponent {
   }
 
   onRegenerate() {
+    // Очищаємо повідомлення
     this.clearMessages();
 
     if (!this.urlValue) {
@@ -107,6 +120,9 @@ export class QrGeneratorComponent {
       this.showToast(this.errorMessage, true);
       return;
     }
+
+    // Оновлюємо бордер на основі введеної ширини
+    this.border = `${this.borderWidth}px solid #000000`;  // Застосовуємо чорний колір бордера
 
     const body = {
       url: this.urlValue,
@@ -160,13 +176,71 @@ export class QrGeneratorComponent {
       return;
     }
 
-    const link = document.createElement('a');
-    link.href = 'data:image/png;base64,' + this.imageBase64;
-    link.download = 'qr-code.png';
-    link.click();
+    const image = new Image();
+    image.src = 'data:image/png;base64,' + this.imageBase64;
 
-    this.successMessage = 'QR code image downloaded successfully.';
-    this.showToast(this.successMessage);
-    console.info('QR code image downloaded.');
+    image.onload = () => {
+      const canvas = this.renderFinalCanvas();
+
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'qr-code-custom.png';
+      link.click();
+
+      this.showToast('QR code downloaded.');
+      console.info('QR code image downloaded.');
+    };
+  }
+
+
+  renderFinalCanvas(): HTMLCanvasElement {
+    const image = new Image();
+    image.src = 'data:image/png;base64,' + this.imageBase64;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+
+    const size = Math.max(image.width, image.height) + this.borderWidth * 2;
+    canvas.width = size;
+    canvas.height = size;
+
+    // Малюємо бордер
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    this.roundRect(ctx, 0, 0, size, size, this.borderRadius);
+    ctx.fill();
+
+    // Вирізаємо внутрішню частину
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    this.roundRect(ctx, this.borderWidth, this.borderWidth, image.width, image.height, this.borderRadius);
+    ctx.fill();
+    ctx.restore();
+
+    // Малюємо QR-код
+    ctx.save();
+    ctx.beginPath();
+    this.roundRect(ctx, this.borderWidth, this.borderWidth, image.width, image.height, this.borderRadius);
+    ctx.clip();
+    ctx.drawImage(image, this.borderWidth, this.borderWidth, image.width, image.height);
+    ctx.restore();
+
+    return canvas;
+  }
+
+
+  roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
   }
 }
