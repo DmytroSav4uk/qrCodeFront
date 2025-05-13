@@ -3,7 +3,6 @@
   (dragover)="onDragOver($event)"
   (dragleave)="onDragLeave($event)"
   (drop)="onDrop($event)">
-
   <p>Drag & drop a QR code image here, or click to upload</p>
   <input type="file" (change)="onFileSelected($event)" class="file-input" accept="image/*">
 </div>
@@ -31,9 +30,8 @@
       <input type="text" [value]="qrCodeText" readonly class="form__field copy-text">
       <button (click)="copyToClipboard()" class="btn btn--primary btn--inside uppercase">Copy</button>
     </div>
+    @if (copied) {
+      <p class="saved-message">Saved to clipboard</p>
+    }
   </div>
-
-  @if (copied) {
-    <p class="saved-message">Saved to clipboard</p>
-  }
 }
