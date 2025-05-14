@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {NgStyle} from '@angular/common';
+import {StatisticsService} from '../../services/statistics.service';
 
 @Component({
   selector: 'app-qr-generator',
@@ -60,7 +61,8 @@ export class QrGeneratorComponent {
   constructor(
     private qrCodeService: QrcodeService,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private statisticsService:StatisticsService
   ) {
     this.qrForm = this.fb.group({
       url: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+$/)]],
@@ -112,7 +114,7 @@ export class QrGeneratorComponent {
   }
 
   onRegenerate() {
-    // Очищаємо повідомлення
+
     this.clearMessages();
 
     if (!this.urlValue) {
@@ -121,8 +123,8 @@ export class QrGeneratorComponent {
       return;
     }
 
-    // Оновлюємо бордер на основі введеної ширини
-    this.border = `${this.borderWidth}px solid #000000`;  // Застосовуємо чорний колір бордера
+
+    this.border = `${this.borderWidth}px solid #000000`;
 
     const body = {
       url: this.urlValue,
@@ -151,6 +153,10 @@ export class QrGeneratorComponent {
         this.loading = false;
       }
     });
+
+
+    this.statisticsService.sendStatistics(body).subscribe()
+
   }
 
   onLogoChange(event: any) {
@@ -204,13 +210,13 @@ export class QrGeneratorComponent {
     canvas.width = size;
     canvas.height = size;
 
-    // Малюємо бордер
+
     ctx.fillStyle = '#000000';
     ctx.beginPath();
     this.roundRect(ctx, 0, 0, size, size, this.borderRadius);
     ctx.fill();
 
-    // Вирізаємо внутрішню частину
+
     ctx.save();
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
@@ -218,7 +224,7 @@ export class QrGeneratorComponent {
     ctx.fill();
     ctx.restore();
 
-    // Малюємо QR-код
+
     ctx.save();
     ctx.beginPath();
     this.roundRect(ctx, this.borderWidth, this.borderWidth, image.width, image.height, this.borderRadius);
