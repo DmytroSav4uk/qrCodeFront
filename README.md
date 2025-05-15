@@ -5,6 +5,15 @@
 
 This is the front-end part of the application for generating and reading QR codes, with additional features such as customizing appearance and uploading a logo.
 
+
+
+### Screenshots
+
+![img.png](preview/img.png)
+![img.png](preview/img_1.png)
+![img.png](preview/img_2.png)
+
+
 ## 📦 Download Build
 
 The desktop version of the built application can be downloaded at:
