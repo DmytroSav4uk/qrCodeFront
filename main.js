@@ -8,7 +8,7 @@ function createWindow () {
   const win = new BrowserWindow({
     width: 800,
     minWidth: 750,
-    maxWidth:800,
+    maxWidth: 800,
     height: 850,
 
     webPreferences: {
@@ -16,25 +16,21 @@ function createWindow () {
       contextIsolation: true
     }
   });
+
   win.setMenu(null);
   win.loadFile(path.join(__dirname, 'dist/qr-code-front/browser/index.html'));
 }
-
 
 function startBackend() {
   const backendPath = path.join(__dirname, 'api/net9.0/QRCodeApi.exe');
 
   backendProcess = spawn(backendPath, [], {
-    stdio: 'inherit'
+    detached: true,
+    stdio: 'ignore',
+    windowsHide: true
   });
 
-  backendProcess.on('close', (code) => {
-    console.log(`Backend process exited with code ${code}`);
-  });
-
-  backendProcess.on('error', (err) => {
-    console.error('Failed to start backend:', err);
-  });
+  backendProcess.unref();
 }
 
 app.whenReady().then(() => {
@@ -42,11 +38,7 @@ app.whenReady().then(() => {
   createWindow();
 });
 
-
 app.on('window-all-closed', () => {
-  if (backendProcess) {
-    backendProcess.kill();
-  }
   if (process.platform !== 'darwin') {
     app.quit();
   }

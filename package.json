@@ -1,12 +1,17 @@
 {
+  "author": "Dmytro Savchuk",
+  "description": "Qr Code Generator",
+  "main": "main.js",
   "name": "qr-code-front",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "electron": "npm run build && electron .",
+    "dist": "electron-builder"
   },
   "private": true,
   "dependencies": {
@@ -34,6 +39,25 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "electron": "^36.2.1",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.ipzk241.qrcodegenerator",
+    "asar": false,
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "api/**/*"
+    ],
+    "directories": {
+      "output": "dist_electron"
+    },
+    "win": {
+      "target": "nsis"
+
+    },
+    "forceCodeSigning": false
   }
 }
