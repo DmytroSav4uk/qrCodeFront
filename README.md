@@ -111,3 +111,12 @@ Several key design patterns were implemented:
 git clone 
 npm install
 ng serve
+
+```
+
+# code amount
+
+![img.png](preview/img_3.png)
+
+
+
